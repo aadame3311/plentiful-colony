@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://bofhm8hretkuv"]
+
+[ext_resource type="Texture2D" uid="uid://xihbpy6yw2sf" path="res://assets/spritesheets/PlentifulColony-Main.png" id="1_84f8h"]
+
+[resource]
+atlas = ExtResource("1_84f8h")
+region = Rect2(48, 80, 80, 80)

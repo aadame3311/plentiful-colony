@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://cqbh07mo57wdm"]
+
+[ext_resource type="Script" path="res://scenes/buildings/TownCenter.cs" id="1_woijy"]
+[ext_resource type="Resource" uid="uid://5wifdhqkojxy" path="res://resources/buildings/town_center.tres" id="2_cbcny"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gob3g"]
+size = Vector2(80, 79)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5u3tc"]
+
+[node name="TownCenter" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_woijy")
+buildingData = ExtResource("2_cbcny")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_gob3g")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_5u3tc")

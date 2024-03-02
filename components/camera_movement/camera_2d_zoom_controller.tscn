@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bn2gd5otmjlt1"]
+
+[ext_resource type="Script" path="res://components/camera_movement/CameraZoomController.cs" id="1_bwr2p"]
+
+[node name="Camera2DZoomController" type="Node"]
+script = ExtResource("1_bwr2p")

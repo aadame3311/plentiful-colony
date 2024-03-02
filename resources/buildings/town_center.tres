@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BuildingData" load_steps=4 format=3 uid="uid://5wifdhqkojxy"]
+
+[ext_resource type="Script" path="res://resources/buildings/BuildingData.cs" id="1_apnr4"]
+[ext_resource type="Resource" uid="uid://w2et0d06io4y" path="res://resources/buildings/town_center_behavior.tres" id="1_lnhuc"]
+[ext_resource type="Texture2D" uid="uid://bofhm8hretkuv" path="res://atlas/town_center.tres" id="2_h2bwv"]
+
+[resource]
+script = ExtResource("1_apnr4")
+buildingType = 0
+texture = ExtResource("2_h2bwv")
+buildingBehavior = ExtResource("1_lnhuc")

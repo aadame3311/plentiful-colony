@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="WorldData" load_steps=2 format=3 uid="uid://cgx031dmu10xx"]
+
+[ext_resource type="Script" path="res://resources/worlds/WorldData.cs" id="1_v856u"]
+
+[resource]
+script = ExtResource("1_v856u")
+worldDimmensions = Vector2i(200, 100)
+groundValue = 30

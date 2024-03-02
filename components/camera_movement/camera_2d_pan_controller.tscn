@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bwxi0s2q16jc8"]
+
+[ext_resource type="Script" path="res://components/camera_movement/Camera2DPanController.cs" id="1_m51h0"]
+
+[node name="Camera2DPanController" type="Node"]
+script = ExtResource("1_m51h0")

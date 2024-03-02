@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CreatureData" load_steps=4 format=3 uid="uid://du7rck5gmudbl"]
+
+[ext_resource type="Script" path="res://resources/creature/CreatureData.cs" id="1_7crjh"]
+[ext_resource type="Resource" uid="uid://ohjw2x5484nm" path="res://resources/creature/male_villager_controller.tres" id="1_ghcvx"]
+[ext_resource type="Texture2D" uid="uid://0f71onl42r1d" path="res://atlas/male_villager.tres" id="3_mpopm"]
+
+[resource]
+script = ExtResource("1_7crjh")
+type = 0
+sprite = ExtResource("3_mpopm")
+creatureController = ExtResource("1_ghcvx")

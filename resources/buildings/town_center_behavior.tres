@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="TownCenterController" load_steps=2 format=3 uid="uid://w2et0d06io4y"]
+
+[ext_resource type="Script" path="res://components/buildings/TownCenterController.cs" id="1_vhjgt"]
+
+[resource]
+script = ExtResource("1_vhjgt")

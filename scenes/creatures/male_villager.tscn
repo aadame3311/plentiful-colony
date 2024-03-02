@@ -1,0 +1,44 @@
+[gd_scene load_steps=8 format=3 uid="uid://df3fxbfre14b1"]
+
+[ext_resource type="Script" path="res://scenes/creatures/Villager.cs" id="1_mk1ek"]
+[ext_resource type="Resource" uid="uid://du7rck5gmudbl" path="res://resources/creature/male_villager.tres" id="2_khfie"]
+[ext_resource type="Script" path="res://components/creatures/VillagerStateMachine.cs" id="3_1jxbc"]
+[ext_resource type="Script" path="res://components/creatures/states/VillagerIdle.cs" id="4_sh1t3"]
+[ext_resource type="Script" path="res://components/creatures/states/VillagerMoveToTree.cs" id="5_fh6nb"]
+[ext_resource type="Script" path="res://components/creatures/states/VillagerChopTree.cs" id="6_kfvb5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j2yiq"]
+size = Vector2(12, 16)
+
+[node name="Villager" type="CharacterBody2D" node_paths=PackedStringArray("navigationAgent", "raycast")]
+script = ExtResource("1_mk1ek")
+creatureData = ExtResource("2_khfie")
+navigationAgent = NodePath("NavigationAgent2D")
+raycast = NodePath("RayCast2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j2yiq")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initialState", "villager")]
+script = ExtResource("3_1jxbc")
+initialState = NodePath("VillagerMoveToTree")
+villager = NodePath("..")
+
+[node name="VillagerIdle" type="Node" parent="StateMachine"]
+script = ExtResource("4_sh1t3")
+
+[node name="VillagerMoveToTree" type="Node" parent="StateMachine"]
+script = ExtResource("5_fh6nb")
+
+[node name="VillagerChopTree" type="Node" parent="StateMachine"]
+script = ExtResource("6_kfvb5")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+unique_name_in_owner = true
+debug_enabled = true
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 0)
