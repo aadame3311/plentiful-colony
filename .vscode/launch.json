@@ -14,7 +14,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "C:/Users/Antonio Adame/Documents/Godot_v4.2.1-stable_mono_win64/Godot_v4.2.1-stable_mono_win64/Godot_v4.2.1-stable_mono_win64.exe",
+      "program": "/Users/antonioadame/Downloads/Godot_mono.app/Contents/MacOS/Godot",
       "console": "internalConsole",
       "stopAtEntry": false
     }
