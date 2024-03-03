@@ -9,11 +9,6 @@ public partial class VillagerMoveToTree : State
     public override void Enter()
     {
         base.Enter();
-        // if (villager.treeToChop != null && IsInstanceValid(villager.treeToChop))
-        // {
-        //     villager.navigationAgent.TargetPosition = villager.treeToChop.Position;
-        //     return;
-        // }
 
         MakePathToClosestTree();
     }
@@ -46,11 +41,23 @@ public partial class VillagerMoveToTree : State
 
     public void MakePathToClosestTree()
     {
-        Node2D treeWorldPosition = Utils.FindClosestDistanceToTarget(
-            villager,
-            villager.GetParent<Main>().trees
-        );
-        villager.treeToChop = treeWorldPosition as Tree;
-        villager.navigationAgent.TargetPosition = treeWorldPosition.Position;
+        // todo fix thisd!!!
+        if (
+            villager.treeToChop == null
+            || !IsInstanceValid(villager.treeToChop)
+            || villager.treeToChop.IsQueuedForDeletion()
+        )
+        {
+            Node2D treeWorldPosition = Utils.FindClosestDistanceToTarget(
+                villager,
+                villager.GetParent<Main>().trees
+            );
+            villager.treeToChop = treeWorldPosition as Tree;
+            villager.navigationAgent.TargetPosition = treeWorldPosition.Position;
+        }
+        else
+        {
+            villager.navigationAgent.TargetPosition = villager.treeToChop.Position;
+        }
     }
 }

@@ -37,3 +37,4 @@ unique_name_in_owner = true
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("4_qsmak")
+health = 1.0

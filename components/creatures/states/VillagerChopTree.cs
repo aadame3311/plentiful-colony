@@ -14,6 +14,13 @@ public partial class VillagerChopTree : State
 
         villager.treeToChop.OnTreeDestroyed += (Tree tree) =>
         {
+            villager.treeToChop = null;
+            if (villager.woodCount >= villager.creatureData.creatureInventoryData.woodLimit)
+            {
+                EmitSignal(SignalName.OnTransition, this, "villagermovetodeposit");
+                return;
+            }
+
             EmitSignal(SignalName.OnTransition, this, "villagermovetotree");
         };
 

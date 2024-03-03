@@ -8,4 +8,4 @@ gender = 0
 health = 100
 speed = 200
 treeDamage = 1
-treeChopRate = 1.0
+treeChopRate = 0.5
