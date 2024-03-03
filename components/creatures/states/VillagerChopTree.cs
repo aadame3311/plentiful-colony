@@ -13,7 +13,7 @@ public partial class VillagerChopTree : State
 
     // when timer runs out, villager will execute chop action on it's treeToChop
     chopTimer = Utils.createTimer(this, villager.treeChopRate, true);
-    chopTimer.Timeout += () => { chopTree = true; };
+    chopTimer.Timeout += () => { ChopTreeAction(); };
     chopTimer.Start();
 
     villager.raycast.CollideWithBodies = true;
@@ -25,16 +25,8 @@ public partial class VillagerChopTree : State
 
   }
 
-
-
-
-  public override void PhysicsUpdate(double delta)
+  public void ChopTreeAction()
   {
-    base.PhysicsUpdate(delta);
-
-
-    var space = villager.GetViewport().World2D.DirectSpaceState;
-
     if (IsInstanceValid(villager.treeToChop))
     {
       villager.raycast.TargetPosition = villager.ToLocal(villager.treeToChop.Position);
@@ -44,13 +36,18 @@ public partial class VillagerChopTree : State
       }
 
       var collider = villager.raycast.GetCollider();
-      if (collider == villager.treeToChop && chopTree)
+      if (collider == villager.treeToChop)
       {
         chopTree = false;
         villager.treeToChop.TreeHit(villager);
       }
     }
+  }
 
-    EmitSignal(SignalName.OnTransition, this, "villagermovetotree");
+  public override void PhysicsUpdate(double delta)
+  {
+    base.PhysicsUpdate(delta);
+
+    // EmitSignal(SignalName.OnTransition, this, "villagermovetotree");
   }
 }

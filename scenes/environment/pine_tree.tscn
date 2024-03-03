@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://brew2juga6w1a"]
+[gd_scene load_steps=7 format=3 uid="uid://brew2juga6w1a"]
 
 [ext_resource type="Script" path="res://scenes/environment/Tree.cs" id="1_g1xls"]
 [ext_resource type="Texture2D" uid="uid://uvcffh4ehfb4" path="res://atlas/pine_tree.tres" id="1_w22hl"]
-[ext_resource type="PackedScene" uid="uid://clttpbwje0ox0" path="res://tree_shake_animation.tscn" id="3_nlkfq"]
+[ext_resource type="PackedScene" path="res://tree_shake_animation.tscn" id="3_nlkfq"]
+[ext_resource type="Script" path="res://components/Health.cs" id="4_25rgs"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d6i5f"]
 size = Vector2(12, 16)
@@ -34,3 +35,6 @@ shape = SubResource("CircleShape2D_fypt4")
 
 [node name="TreeShakeAnimation" parent="." instance=ExtResource("3_nlkfq")]
 unique_name_in_owner = true
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("4_25rgs")
