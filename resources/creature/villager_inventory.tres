@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="CreatureInventoryData" load_steps=2 format=3 uid="uid://c28fdmwmfcqgp"]
+
+[ext_resource type="Script" path="res://resources/creature/CreatureInventoryData.cs" id="1_xhn8o"]
+
+[resource]
+script = ExtResource("1_xhn8o")
+woodLimit = 10

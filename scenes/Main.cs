@@ -1,95 +1,135 @@
 using Godot;
+using Godot.Collections;
 
 public partial class Main : Node2D
 {
+    [Signal]
+    public delegate void OnWorldEnvironmentChangeEventHandler(Node instance);
 
-	[Signal]
-	public delegate void OnWorldEnvironmentChangeEventHandler(Node instance);
+    private PackedScene _starterTownCenter = GD.Load<PackedScene>(
+        "res://scenes/buildings/town_center.tscn"
+    );
+    private PackedScene _world = GD.Load<PackedScene>("res://scenes/tile_map/tile_map.tscn");
+    private Array<PackedScene> _trees = new Array<PackedScene>
+    {
+        GD.Load<PackedScene>("res://scenes/environment/pine_tree.tscn"),
+        // GD.Load<PackedScene>("res://scenes/environment/tree.tscn"),
+        // GD.Load<PackedScene>("res://scenes/environment/square_tree.tscn")
+    };
+    private Camera _camera;
+    private TownCenter _townCenter;
+    public ProceduralTileMap proceduralTileMap;
+    public Array<Node2D> trees = new Array<Node2D>();
+    public Array<Node2D> depositCenters = new Array<Node2D>();
 
-	private PackedScene _starterTownCenter = GD.Load<PackedScene>("res://scenes/buildings/town_center.tscn");
-	private PackedScene _world = GD.Load<PackedScene>("res://scenes/tile_map/tile_map.tscn");
+    // debugging displaysv
+    Label coordsLabel;
 
-	private Camera _camera;
-	private TownCenter _townCenter;
-	public ProceduralTileMap proceduralTileMap;
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        InitDebugging();
 
-	// debugging displaysv
-	Label coordsLabel;
+        proceduralTileMap = _world.Instantiate<ProceduralTileMap>();
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		InitDebugging();
+        GD.Print("Loading - Generating world");
 
-		proceduralTileMap = _world.Instantiate<ProceduralTileMap>();
+        // SubscribeToTreeOnDestroy has to happen after adding proc map into scene
+        AddChild(proceduralTileMap);
+        SubscribeToTreeOnDestroy();
 
-		GD.Print("Loading - Generating world");
+        _camera = GetNode<Camera>("%Camera2D");
 
-		// SubscribeToTreeOnDestroy has to happen after adding proc map into scene
-		AddChild(proceduralTileMap);
-		SubscribeToTreeOnDestroy();
+        _townCenter = (TownCenter)_starterTownCenter.Instantiate();
 
-		_camera = GetNode<Camera>("%Camera2D");
+        GD.Print("Loading - Evaluating town center spawn location");
+        EvaluateTownCenterPosition();
+        AddChild(_townCenter);
+        depositCenters.Add(_townCenter);
 
-		_townCenter = (TownCenter)_starterTownCenter.Instantiate();
+        PoissonDiscSampling pds = new PoissonDiscSampling(1.7, 50, proceduralTileMap.worldData);
+        Array<Vector2I> treeGrid = pds.Process();
 
-		GD.Print("Loading - Evaluating town center spawn location");
-		EvaluateTownCenterPosition();
-		AddChild(_townCenter);
+        foreach (Vector2I vector in treeGrid)
+        {
+            if (vector.X == -1)
+            {
+                continue;
+            }
 
-		// ! for testing only, should replace with actual spawn logic
-		Villager villager = _townCenter.spawnVillager();
-		AddChild(villager);
+            TileData td = proceduralTileMap.GetCellTileData(0, vector);
+            if (td != null && !(bool)td.GetCustomDataByLayerId(0))
+            {
+                continue;
+            }
 
-		Villager villager2 = _townCenter.spawnVillager();
-		villager2.Position = new Vector2(villager2.Position.X + 32, villager.Position.Y);
-		AddChild(villager2);
-		// !
+            Node2D pineTreeInstance = _trees.PickRandom().Instantiate<Node2D>();
+            pineTreeInstance.Position = proceduralTileMap.MapToLocal(vector);
 
-	}
+            GD.Print($"Distance to: {pineTreeInstance.Position.DistanceTo(_townCenter.Position)}");
+            if (pineTreeInstance.Position.DistanceTo(_townCenter.Position) > 100f)
+            {
+                trees.Add(pineTreeInstance);
+                pineTreeInstance.AddToGroup("trees");
+                proceduralTileMap.AddChild(pineTreeInstance);
+            }
+        }
 
-	public override void _Process(double delta)
-	{
-		_camera.SetCameraLimits(this);
-		if (coordsLabel != null)
-		{
-			UpdateDebugUI();
-		}
-	}
+        CallDeferred("SpawnVillagers");
+    }
 
-	public void SubscribeToTreeOnDestroy()
-	{
-		foreach (Tree tree in proceduralTileMap.trees)
-		{
-			tree.OnTreeDestroyed += (Node t) =>
-			{
-				EmitSignal(SignalName.OnWorldEnvironmentChange, t);
-			};
-		}
+    public void SpawnVillagers()
+    {
+        // ! for testing only, should replace with actual spawn logic
+        Villager villager = _townCenter.spawnVillager();
+        AddChild(villager);
 
-	}
+        Villager villager2 = _townCenter.spawnVillager();
+        villager2.Position = new Vector2(villager2.Position.X + 32, villager.Position.Y);
+        AddChild(villager2);
+        // !
+    }
 
-	public void UpdateDebugUI()
-	{
+    public override void _Process(double delta)
+    {
+        _camera.SetCameraLimits(this);
+        if (coordsLabel != null)
+        {
+            UpdateDebugUI();
+        }
+    }
 
-		coordsLabel.Text = $"Coords: ({_camera.Position.X}, {_camera.Position.Y})";
-		coordsLabel.Text += $"\nCamera Zoom: {_camera.Zoom}";
-		coordsLabel.Text += $"\nCamera Viewport: {_camera.GetViewportRect().Size.X}";
-		coordsLabel.Text += $"\nTileMap Used Rect: {proceduralTileMap.GetUsedRect().Size}";
-	}
+    public void SubscribeToTreeOnDestroy()
+    {
+        // foreach (Tree tree in trees)
+        // {
+        //     tree.OnTreeDestroyed += (Tree t) =>
+        //     {
+        //         EmitSignal(SignalName.OnWorldEnvironmentChange, t);
+        //     };
+        // }
+    }
 
-	public void EvaluateTownCenterPosition()
-	{
-		var spawnPoints = proceduralTileMap.validSpawnPoints;
-		var randomSpawnPoint = spawnPoints[GD.RandRange(0, spawnPoints.Count - 1)];
+    public void UpdateDebugUI()
+    {
+        coordsLabel.Text = $"Coords: ({_camera.Position.X}, {_camera.Position.Y})";
+        coordsLabel.Text += $"\nCamera Zoom: {_camera.Zoom}";
+        coordsLabel.Text += $"\nCamera Viewport: {_camera.GetViewportRect().Size.X}";
+        coordsLabel.Text += $"\nTileMap Used Rect: {proceduralTileMap.GetUsedRect().Size}";
+    }
 
-		_townCenter.Position = proceduralTileMap.MapToLocal(randomSpawnPoint);
-		_camera.Position = proceduralTileMap.MapToLocal(randomSpawnPoint);
-	}
+    public void EvaluateTownCenterPosition()
+    {
+        var spawnPoints = proceduralTileMap.validSpawnPoints;
+        var randomSpawnPoint = spawnPoints[GD.RandRange(0, spawnPoints.Count - 1)];
 
-	public void InitDebugging()
-	{
-		coordsLabel = GetNode<Label>("%CoordsLabel");
-		coordsLabel.Text = "Coords: ()";
-	}
+        _townCenter.Position = proceduralTileMap.MapToLocal(randomSpawnPoint);
+        _camera.Position = proceduralTileMap.MapToLocal(randomSpawnPoint);
+    }
+
+    public void InitDebugging()
+    {
+        coordsLabel = GetNode<Label>("%CoordsLabel");
+        coordsLabel.Text = "Coords: ()";
+    }
 }

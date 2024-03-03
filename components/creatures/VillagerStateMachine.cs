@@ -38,13 +38,13 @@ public partial class VillagerStateMachine : Node
         }
 
         villager.OnStateChange += (Villager v) =>
-       {
-           if (currentState == states["villagermovetotree"])
-           {
-               currentState.Exit();
-               currentState.Enter();
-           }
-       };
+        {
+            if (currentState == states["villagermovetotree"])
+            {
+                currentState.Exit();
+                currentState.Enter();
+            }
+        };
     }
 
     public void OnChildTransition(State state, string newStateName)
@@ -53,7 +53,6 @@ public partial class VillagerStateMachine : Node
         {
             return;
         }
-
 
         State newState = states[newStateName.ToLower()];
         if (newState != null)
@@ -66,8 +65,6 @@ public partial class VillagerStateMachine : Node
             newState.Enter();
             currentState = newState;
         }
-
-
     }
 
     public override void _Process(double delta)

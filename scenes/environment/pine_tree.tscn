@@ -2,22 +2,21 @@
 
 [ext_resource type="Script" path="res://scenes/environment/Tree.cs" id="1_g1xls"]
 [ext_resource type="Texture2D" uid="uid://uvcffh4ehfb4" path="res://atlas/pine_tree.tres" id="1_w22hl"]
-[ext_resource type="PackedScene" path="res://tree_shake_animation.tscn" id="3_nlkfq"]
-[ext_resource type="Script" path="res://components/Health.cs" id="4_25rgs"]
+[ext_resource type="PackedScene" uid="uid://clttpbwje0ox0" path="res://tree_shake_animation.tscn" id="3_nlkfq"]
+[ext_resource type="Script" path="res://components/Health.cs" id="4_qsmak"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d6i5f"]
-size = Vector2(12, 16)
+size = Vector2(11, 9)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fypt4"]
 radius = 116.039
 
 [node name="Node2D" type="StaticBody2D"]
-collision_layer = 3
-collision_mask = 3
 script = ExtResource("1_g1xls")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_d6i5f")
+debug_color = Color(0.960784, 0.0745098, 0.462745, 0.419608)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = -0.00563067
@@ -26,8 +25,8 @@ texture = ExtResource("1_w22hl")
 [node name="SpawnConflictArea" type="Area2D" parent="."]
 unique_name_in_owner = true
 visible = false
-collision_layer = 3
-collision_mask = 3
+collision_layer = 2
+collision_mask = 2
 
 [node name="SpawnConflictDetection" type="CollisionShape2D" parent="SpawnConflictArea"]
 unique_name_in_owner = true
@@ -37,4 +36,4 @@ shape = SubResource("CircleShape2D_fypt4")
 unique_name_in_owner = true
 
 [node name="Health" type="Node" parent="."]
-script = ExtResource("4_25rgs")
+script = ExtResource("4_qsmak")

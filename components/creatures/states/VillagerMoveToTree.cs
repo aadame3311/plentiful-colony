@@ -1,101 +1,56 @@
-
+using System.Collections.Generic;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
 [GlobalClass]
 public partial class VillagerMoveToTree : State
 {
-  public override void Enter()
-  {
-    base.Enter();
-
-    CallDeferred("MakePathToClosestTree");
-  }
-
-  public override void Update(double delta)
-  {
-    base.Update(delta);
-  }
-
-  public override void Exit()
-  {
-    base.Exit();
-  }
-
-  public override void PhysicsUpdate(double delta)
-  {
-    // TODO edge case needs to be fixed..
-    // TODO when nearest tree is on the other side of an unreachable destination
-
-    base.PhysicsUpdate(delta);
-
-
-    if (villager.navigationAgent.IsNavigationFinished())
+    public override void Enter()
     {
-      // GD.Print("Villager finished navigation");
-      EmitSignal(SignalName.OnTransition, this, "villagerchoptree");
+        base.Enter();
+        // if (villager.treeToChop != null && IsInstanceValid(villager.treeToChop))
+        // {
+        //     villager.navigationAgent.TargetPosition = villager.treeToChop.Position;
+        //     return;
+        // }
 
-      return;
+        MakePathToClosestTree();
     }
 
-    // move to tree
-    if (IsInstanceValid(villager.treeToChop) && villager.navigationAgent.IsTargetReachable())
+    public override void PhysicsUpdate(double delta)
     {
-      Vector2 direction = villager.navigationAgent.GetNextPathPosition();
-      if (villager != null)
-      {
-        Vector2 newVelocity = direction - villager.GlobalPosition;
-        newVelocity = newVelocity.Normalized();
-        newVelocity *= villager.creatureData.creatureController.speed;
-        villager.Velocity = newVelocity;
+        // TODO edge case needs to be fixed..
+        // TODO when nearest tree is on the other side of an unreachable destination
 
-        villager.MoveAndSlide();
-      }
-    }
-    else
-    {
-      MakePathToClosestTree();
-    }
-  }
+        base.PhysicsUpdate(delta);
+        if (villager.navigationAgent.IsNavigationFinished() && IsInstanceValid(villager.treeToChop))
+        {
+            EmitSignal(SignalName.OnTransition, this, "villagerchoptree");
 
-  public bool CheckIfTargetReachable(Vector2 targetPosition)
-  {
-    villager.navigationAgent.TargetPosition = targetPosition;
-    return villager.navigationAgent.IsTargetReachable();
-  }
+            return;
+        }
 
-  public Tree FindClosestTree(out Vector2 closestDistance)
-  {
-    Main world = villager.GetParent<Main>();
-    Array<Tree> treeGrid = world.proceduralTileMap.trees;
+        // move to tree
+        if (IsInstanceValid(villager.treeToChop) && villager.navigationAgent.IsTargetReachable())
+        {
+            Utils.MoveVillagerAlongNavigationPath(villager);
+        }
+        else
+        {
+            MakePathToClosestTree();
+        }
 
-    Tree closestTree = treeGrid[0];
-    Vector2 closestTreeVector = closestTree.Position;
-    float closestTreeDistance = villager.Position.DistanceTo(closestTreeVector);
-
-    foreach (Tree tree in treeGrid)
-    {
-      Vector2 vector = tree.Position;
-      float currentDistance = villager.Position.DistanceTo(vector);
-
-      if (currentDistance < closestTreeDistance && IsInstanceValid(tree))
-      {
-        closestTreeDistance = currentDistance;
-        closestTreeVector = vector;
-        closestTree = tree;
-      }
+        // villager.navigationAgent.TargetPosition = villager.treeToChop.Position;
     }
 
-    closestDistance = closestTreeVector;
-
-    return closestTree;
-  }
-
-  public void MakePathToClosestTree()
-  {
-    Vector2 treeWorldPosition;
-    villager.treeToChop = FindClosestTree(out treeWorldPosition);
-
-    villager.navigationAgent.TargetPosition = treeWorldPosition;
-  }
+    public void MakePathToClosestTree()
+    {
+        Node2D treeWorldPosition = Utils.FindClosestDistanceToTarget(
+            villager,
+            villager.GetParent<Main>().trees
+        );
+        villager.treeToChop = treeWorldPosition as Tree;
+        villager.navigationAgent.TargetPosition = treeWorldPosition.Position;
+    }
 }

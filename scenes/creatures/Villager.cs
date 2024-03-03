@@ -1,56 +1,56 @@
-using Godot;
 using System;
+using Godot;
 
 public partial class Villager : CharacterBody2D
 {
-	[Export]
-	public CreatureData creatureData;
+    [Export]
+    public CreatureData creatureData;
 
-	[Export]
-	public NavigationAgent2D navigationAgent;
+    [Export]
+    public NavigationAgent2D navigationAgent;
 
-	[Export]
-	public double treeChopRate = 3.0;
+    [Export]
+    public RayCast2D raycast;
 
-	[Export]
-	public RayCast2D raycast;
+    [Signal]
+    public delegate void OnStateChangeEventHandler(Villager villager);
 
-	[Signal]
-	public delegate void OnStateChangeEventHandler(Villager villager);
+    public Main world;
 
-	public Main world;
+    public Tree treeToChop;
 
-	public Tree treeToChop;
+    public Area2D hitDetectionArea;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-		Sprite2D sprite = GetNode<Sprite2D>("%Sprite2D");
-		sprite.Texture = creatureData.sprite;
+    public int woodCount = 0;
 
-		(creatureData.creatureController as VillagerController)._OnSpawn();
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
+    {
+        world = GetParent<Main>();
+        raycast.Enabled = true;
+        Sprite2D sprite = GetNode<Sprite2D>("%Sprite2D");
+        sprite.Texture = creatureData.sprite;
 
-		world = GetParent<Main>();
-		if (world == null)
-		{
-			GD.PushError("Villager needs world of type `Main` as a parent Node.");
-		}
+        (creatureData.creatureController as VillagerController)._OnSpawn();
 
-		world.OnWorldEnvironmentChange += (Node e) =>
-		{
-			if (e is Tree)
-			{
-				HandleOnTreeChanges();
-			}
-		};
+        if (world == null)
+        {
+            GD.PushError("Villager needs world of type `Main` as a parent Node.");
+        }
 
-		navigationAgent.PathDesiredDistance = (float)24.0;
-		navigationAgent.PathDesiredDistance = (float)24.0;
-	}
+        world.OnWorldEnvironmentChange += (Node e) =>
+        {
+            if (e is Tree)
+            {
+                HandleOnTreeChanges();
+            }
+        };
 
-	public void HandleOnTreeChanges()
-	{
-		EmitSignal(SignalName.OnStateChange, this);
-	}
+        navigationAgent.PathDesiredDistance = (float)16.0;
+    }
 
+    public void HandleOnTreeChanges()
+    {
+        EmitSignal(SignalName.OnStateChange, this);
+    }
 }

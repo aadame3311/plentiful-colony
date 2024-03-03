@@ -44,13 +44,10 @@ public partial class Health : Node
 
     public void HealthDepleteHandler()
     {
-        if (health <= 0)
+        if (parent is Tree)
         {
-            if (parent is Tree)
-            {
-                Tree treeNode = parent as Tree;
-                treeNode.RemoveTree();
-            }
+            Tree treeNode = parent as Tree;
+            treeNode.RemoveTree();
         }
     }
 }

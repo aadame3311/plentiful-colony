@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://df3fxbfre14b1"]
+[gd_scene load_steps=9 format=3 uid="uid://df3fxbfre14b1"]
 
 [ext_resource type="Script" path="res://scenes/creatures/Villager.cs" id="1_mk1ek"]
 [ext_resource type="Resource" uid="uid://du7rck5gmudbl" path="res://resources/creature/male_villager.tres" id="2_khfie"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://components/creatures/states/VillagerIdle.cs" id="4_sh1t3"]
 [ext_resource type="Script" path="res://components/creatures/states/VillagerMoveToTree.cs" id="5_fh6nb"]
 [ext_resource type="Script" path="res://components/creatures/states/VillagerChopTree.cs" id="6_kfvb5"]
+[ext_resource type="Script" path="res://components/creatures/states/VillagerMoveToDeposit.cs" id="7_t7byy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j2yiq"]
 size = Vector2(12, 16)
@@ -36,8 +37,16 @@ script = ExtResource("5_fh6nb")
 [node name="VillagerChopTree" type="Node" parent="StateMachine"]
 script = ExtResource("6_kfvb5")
 
+[node name="VillagerMoveToDeposit" type="Node" parent="StateMachine"]
+script = ExtResource("7_t7byy")
+
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 unique_name_in_owner = true
+path_postprocessing = 1
+avoidance_enabled = true
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(0, 0)
+collide_with_areas = true
