@@ -4,26 +4,34 @@ using Godot;
 public partial class VillagerChopTree : State
 {
   double initialChopTimer = 1;
-  double chopTimer;
+  Timer chopTimer;
+  bool chopTree;
 
   public override void Enter()
   {
     base.Enter();
 
-    chopTimer = 0;
+    // when timer runs out, villager will execute chop action on it's treeToChop
+    chopTimer = Utils.createTimer(this, villager.treeChopRate, true);
+    chopTimer.Timeout += () => { chopTree = true; };
+    chopTimer.Start();
+
     villager.raycast.CollideWithBodies = true;
     if (villager.treeToChop == null || villager.treeToChop.IsQueuedForDeletion())
     {
+      GD.Print("transitioning");
       EmitSignal(SignalName.OnTransition, this, "villagermovetotree");
-
     }
 
   }
 
 
+
+
   public override void PhysicsUpdate(double delta)
   {
     base.PhysicsUpdate(delta);
+
 
     var space = villager.GetViewport().World2D.DirectSpaceState;
 
@@ -36,9 +44,10 @@ public partial class VillagerChopTree : State
       }
 
       var collider = villager.raycast.GetCollider();
-      if (collider == villager.treeToChop)
+      if (collider == villager.treeToChop && chopTree)
       {
-        villager.treeToChop.RemoveTree();
+        chopTree = false;
+        villager.treeToChop.TreeHit(villager);
       }
     }
 

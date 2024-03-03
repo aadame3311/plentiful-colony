@@ -32,7 +32,7 @@ public partial class VillagerMoveToTree : State
 
     if (villager.navigationAgent.IsNavigationFinished())
     {
-      GD.Print("Villager finished navigation");
+      // GD.Print("Villager finished navigation");
       EmitSignal(SignalName.OnTransition, this, "villagerchoptree");
 
       return;

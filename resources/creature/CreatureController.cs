@@ -6,6 +6,8 @@ public partial class CreatureController : Resource
     public int health;
     [Export]
     public int speed = 10;
+    [Export]
+    public int treeDamage = 33;
 
     [Signal]
     public delegate void OnSpawnEventHandler();

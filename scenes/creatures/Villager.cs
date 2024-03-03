@@ -3,51 +3,54 @@ using System;
 
 public partial class Villager : CharacterBody2D
 {
-  [Export]
-  public CreatureData creatureData;
+	[Export]
+	public CreatureData creatureData;
 
-  [Export]
-  public NavigationAgent2D navigationAgent;
+	[Export]
+	public NavigationAgent2D navigationAgent;
 
-  [Export]
-  public RayCast2D raycast;
+	[Export]
+	public double treeChopRate = 3.0;
 
-  [Signal]
-  public delegate void OnStateChangeEventHandler(Villager villager);
+	[Export]
+	public RayCast2D raycast;
 
-  public Main world;
+	[Signal]
+	public delegate void OnStateChangeEventHandler(Villager villager);
 
-  public Tree treeToChop;
+	public Main world;
 
-  // Called when the node enters the scene tree for the first time.
-  public override void _Ready()
-  {
-	Sprite2D sprite = GetNode<Sprite2D>("%Sprite2D");
-	sprite.Texture = creatureData.sprite;
+	public Tree treeToChop;
 
-	(creatureData.creatureController as VillagerController)._OnSpawn();
-
-	world = GetParent<Main>();
-	if (world == null)
+	// Called when the node enters the scene tree for the first time.
+	public override void _Ready()
 	{
-	  GD.PushError("Villager needs world of type `Main` as a parent Node.");
+		Sprite2D sprite = GetNode<Sprite2D>("%Sprite2D");
+		sprite.Texture = creatureData.sprite;
+
+		(creatureData.creatureController as VillagerController)._OnSpawn();
+
+		world = GetParent<Main>();
+		if (world == null)
+		{
+			GD.PushError("Villager needs world of type `Main` as a parent Node.");
+		}
+
+		world.OnWorldEnvironmentChange += (Node e) =>
+		{
+			if (e is Tree)
+			{
+				HandleOnTreeChanges();
+			}
+		};
+
+		navigationAgent.PathDesiredDistance = (float)24.0;
+		navigationAgent.PathDesiredDistance = (float)24.0;
 	}
 
-	world.OnWorldEnvironmentChange += (Node e) =>
+	public void HandleOnTreeChanges()
 	{
-	  if (e is Tree)
-	  {
-		HandleOnTreeChanges();
-	  }
-	};
-
-	navigationAgent.PathDesiredDistance = (float)32.0;
-	navigationAgent.PathDesiredDistance = (float)32.0;
-  }
-
-  public void HandleOnTreeChanges()
-  {
-	EmitSignal(SignalName.OnStateChange, this);
-  }
+		EmitSignal(SignalName.OnStateChange, this);
+	}
 
 }

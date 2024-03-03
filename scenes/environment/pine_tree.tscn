@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://brew2juga6w1a"]
+[gd_scene load_steps=6 format=3 uid="uid://brew2juga6w1a"]
 
 [ext_resource type="Script" path="res://scenes/environment/Tree.cs" id="1_g1xls"]
 [ext_resource type="Texture2D" uid="uid://uvcffh4ehfb4" path="res://atlas/pine_tree.tres" id="1_w22hl"]
+[ext_resource type="PackedScene" uid="uid://clttpbwje0ox0" path="res://tree_shake_animation.tscn" id="3_nlkfq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_d6i5f"]
 size = Vector2(12, 16)
@@ -18,13 +19,18 @@ script = ExtResource("1_g1xls")
 shape = SubResource("RectangleShape2D_d6i5f")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = -0.00563067
 texture = ExtResource("1_w22hl")
 
 [node name="SpawnConflictArea" type="Area2D" parent="."]
 unique_name_in_owner = true
+visible = false
 collision_layer = 3
 collision_mask = 3
 
 [node name="SpawnConflictDetection" type="CollisionShape2D" parent="SpawnConflictArea"]
 unique_name_in_owner = true
 shape = SubResource("CircleShape2D_fypt4")
+
+[node name="TreeShakeAnimation" parent="." instance=ExtResource("3_nlkfq")]
+unique_name_in_owner = true
