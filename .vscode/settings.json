@@ -1,3 +1,9 @@
 {
-  "godotTools.editorPath.godot4": "/Users/antonioadame/Documents/projects/gamedev/plentiful-colony/PlentifulColony.csproj"
+	"godotTools.editorPath.godot4": "/Users/antonioadame/Documents/projects/gamedev/plentiful-colony/PlentifulColony.csproj",
+	"editor.formatOnSave": true,
+	"editor.tabSize": 2,
+	"prettier.useTabs": true,
+	"prettier.tabWidth": 2,
+	"csharp.format.enable": true
 }
+
